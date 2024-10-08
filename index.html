@@ -41,57 +41,32 @@
 
         const bpm = parseInt(document.getElementById('bpmInput').value) || 120;
         let luaCode = "";
+        let currentTime = 0;  // Current time in ticks
 
-        // Track merging and handling
-        const notesToPlay = [];
-        
         // Loop through tracks
         parsed.track.forEach(track => {
-          let trackNotes = []; // Hold the notes for the current track
-          let lastNoteOn = null; // To track the last note on event
-          let lastNoteOnTime = 0; // To store the time of the last note on
-
           track.event.forEach(event => {
-            const deltaTime = event.deltaTime;
-            const currentTime = lastNoteOnTime + deltaTime; // Update current time for this event
-            
-            // Check if it's a Note On event
+            // Only process "Note On" and "Note Off" events
             if (event.type === 9 && event.data[1] > 0) { // "Note On" event
               const noteNumber = event.data[0]; // MIDI note number
+              const velocity = event.data[1];
+              const deltaTime = event.deltaTime;
 
               // Ignore notes below C1 (MIDI note 24) and above C5 (MIDI note 72)
               if (noteNumber >= 24 && noteNumber <= 72) {
                 const { note, octave } = midiNoteToLua(noteNumber);
-                lastNoteOn = { note, octave, start: currentTime, velocity: event.data[1] };
-                lastNoteOnTime = currentTime; // Update last note on time
+                const duration = deltaTime / parsed.timeDivision; // Calculate duration
+
+                luaCode += pressnote("${note}", ${octave}, ${duration.toFixed(2)}, bpm)\n;
               }
             }
 
-            // Check for Note Off events
-            if (event.type === 8 || (event.type === 9 && event.data[1] === 0)) {
-              // If there's a last Note On event, calculate its duration
-              if (lastNoteOn) {
-                const duration = (currentTime - lastNoteOn.start) / parsed.timeDivision; // Duration in beats
-                if (duration > 0) {
-                  trackNotes.push({ ...lastNoteOn, duration }); // Store note with duration
-                }
-                lastNoteOn = null; // Reset last note on
-              }
-            }
-
-            // Handle gaps to add a rest
-            if (event.deltaTime > 0 && lastNoteOn === null) {
-              luaCode += `rest(0.25, bpm)\n`; // Always rest for 0.25 beats
+            // Rest logic: add a rest if there's a gap between notes
+            if (event.deltaTime > 0) {
+              const restDuration = event.deltaTime / parsed.timeDivision;
+              luaCode += rest(${restDuration.toFixed(2)}, bpm)\n;
             }
           });
-
-          // Add the collected track notes to the main notesToPlay array
-          notesToPlay.push(...trackNotes);
-        });
-
-        // Output the Lua code
-        notesToPlay.forEach(n => {
-          luaCode += `pressnote("${n.note}", ${n.octave}, ${n.duration.toFixed(2)}, bpm)\n`;
         });
 
         document.getElementById('output').textContent = luaCode;
