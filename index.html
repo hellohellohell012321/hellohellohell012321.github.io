@@ -1,102 +1,85 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MIDI to Lua Converter</title>
-</head>
-<body>
-  <h1>MIDI to Lua Converter</h1>
-  <p>Upload a MIDI file, and input the desired BPM to convert it to Lua code:</p>
+<script src="https://cdn.jsdelivr.net/npm/midi-parser-js"></script>
+<script>
+  // Function to convert MIDI note number to note name and octave
+  function midiNoteToLua(noteNumber) {
+    const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+    const octave = Math.floor(noteNumber / 12) - 1;
+    const note = notes[noteNumber % 12];
+    return { note, octave };
+  }
 
-  <!-- File Input -->
-  <input type="file" id="midiFile" accept=".mid,.midi">
-  
-  <!-- BPM Input -->
-  <label for="bpmInput">BPM:</label>
-  <input type="number" id="bpmInput" value="120" min="40" max="300">
+  // Function to handle MIDI file and convert it to Lua
+  document.getElementById('midiFile').addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    if (!file) return;
 
-  <!-- Output -->
-  <pre id="output"></pre>
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const midiArray = new Uint8Array(e.target.result);
+      const parsed = MidiParser.parse(midiArray); // Parse the MIDI file
 
-  <script src="https://cdn.jsdelivr.net/npm/midi-parser-js"></script>
-  <script>
-    // Function to convert MIDI note number to note name and octave
-    function midiNoteToLua(noteNumber) {
-      const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-      const octave = Math.floor(noteNumber / 12) - 1;
-      const note = notes[noteNumber % 12];
-      return { note, octave };
-    }
+      const bpm = parseInt(document.getElementById('bpmInput').value) || 120;
+      let luaCode = "";
+      let notesByTime = {};
+      let restDuration = 0; // Duration of consecutive rests
+      let currentTime = 0;  // Track the current time in ticks
 
-    // Function to handle MIDI file and convert it to Lua
-    document.getElementById('midiFile').addEventListener('change', function (event) {
-      const file = event.target.files[0];
-      if (!file) return;
+      // Loop through tracks
+      parsed.track.forEach(track => {
+        track.event.forEach(event => {
+          if (event.type === 9 && event.data[1] > 0) { // "Note On" event
+            const noteNumber = event.data[0]; // MIDI note number
+            const velocity = event.data[1];
+            const deltaTime = event.deltaTime;
 
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const midiArray = new Uint8Array(e.target.result);
-        const parsed = MidiParser.parse(midiArray); // Parse the MIDI file
+            // Ignore notes below C1 (MIDI note 24) and above C5 (MIDI note 72)
+            if (noteNumber >= 24 && noteNumber <= 72) {
+              const { note, octave } = midiNoteToLua(noteNumber);
+              const durationInBeats = (deltaTime / parsed.timeDivision) * (bpm / 60); // Calculate duration in beats
 
-        const bpm = parseInt(document.getElementById('bpmInput').value) || 120;
-        let luaCode = "";
-        let notesByTime = {}; // Collect notes by their timing
-        let currentTime = 0; // Track the current time in ticks
+              // Calculate the current beat timing based on current ticks and BPM
+              const beatKey = currentTime / parsed.timeDivision * (bpm / 60);
 
-        // Loop through tracks
-        parsed.track.forEach(track => {
-          track.event.forEach(event => {
-            if (event.type === 9 && event.data[1] > 0) { // "Note On" event
-              const noteNumber = event.data[0];
-              const velocity = event.data[1];
-              const deltaTime = event.deltaTime;
-
-              if (noteNumber >= 24 && noteNumber <= 72) {
-                const { note, octave } = midiNoteToLua(noteNumber);
-                // Calculate time in beats for this note
-                const durationInBeats = (deltaTime / parsed.timeDivision) * (bpm / 60);
-
-                // Calculate the current beat timing based on current ticks and BPM
-                const beatKey = currentTime / parsed.timeDivision * (bpm / 60);
-                // Collect the note under its calculated beat key
-                if (!notesByTime[beatKey]) {
-                  notesByTime[beatKey] = [];
-                }
-                notesByTime[beatKey].push({ note, octave, durationInBeats });
-                currentTime += deltaTime; // Update current time with the delta
+              // Collect the note under its calculated beat key
+              if (!notesByTime[beatKey]) {
+                notesByTime[beatKey] = [];
               }
+              notesByTime[beatKey].push({ note, octave, durationInBeats });
+              currentTime += deltaTime; // Update current time with the delta
             }
+          }
 
-            // Handle rest logic
-            if (event.deltaTime > 0) {
-              const restDurationInBeats = (event.deltaTime / parsed.timeDivision) * (bpm / 60);
-              // Output all notes collected in notesByTime
-              for (const timeKey in notesByTime) {
-                notesByTime[timeKey].forEach(({ note, octave, durationInBeats }) => {
-                  luaCode += `pressnote("${note}", ${octave}, ${durationInBeats.toFixed(2)}, ${bpm})\n`;
-                });
-              }
-
-              // Add rest to Lua code
-              luaCode += `rest(${restDurationInBeats.toFixed(2)}, ${bpm})\n`;
-              notesByTime = {}; // Clear the notes collection for the next set
+          // Handle rest logic: if there's a gap between notes, keep track of the rest duration
+          if (event.deltaTime > 0) {
+            const restDurationInBeats = (event.deltaTime / parsed.timeDivision) * (bpm / 60);
+            restDuration += restDurationInBeats; // Accumulate rest duration
+          } else {
+            // If we encounter a note after a rest, output the rest if accumulated
+            if (restDuration > 0) {
+              luaCode += `rest(${restDuration.toFixed(2)}, ${bpm})\n`;
+              restDuration = 0; // Reset rest duration after output
             }
-          });
+          }
         });
+      });
 
-        // Final output for any remaining notes
-        for (const timeKey in notesByTime) {
-          notesByTime[timeKey].forEach(({ note, octave, durationInBeats }) => {
+      // Final output for any remaining notes
+      for (const timeKey in notesByTime) {
+        notesByTime[timeKey].forEach(({ note, octave, durationInBeats }) => {
+          if (durationInBeats > 0) { // Only output notes with positive duration
             luaCode += `pressnote("${note}", ${octave}, ${durationInBeats.toFixed(2)}, ${bpm})\n`;
-          });
-        }
+          }
+        });
+      }
 
-        document.getElementById('output').textContent = luaCode; // Display the Lua code
-      };
+      // Output any remaining rest at the end
+      if (restDuration > 0) {
+        luaCode += `rest(${restDuration.toFixed(2)}, ${bpm})\n`;
+      }
 
-      reader.readAsArrayBuffer(file); // Read MIDI file as ArrayBuffer
-    });
-  </script>
-</body>
-</html>
+      document.getElementById('output').textContent = luaCode; // Display the Lua code
+    };
+
+    reader.readAsArrayBuffer(file); // Read MIDI file as ArrayBuffer
+  });
+</script>
