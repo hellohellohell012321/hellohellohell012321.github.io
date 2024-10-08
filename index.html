@@ -43,10 +43,13 @@
         let luaCode = "";
         let currentTime = 0;  // Current time in ticks
 
+        // Object to store notes by their time position
+        const notesByTime = {};
+
         // Loop through tracks
         parsed.track.forEach(track => {
           track.event.forEach(event => {
-            // Only process "Note On" and "Note Off" events
+            // Only process "Note On" events
             if (event.type === 9 && event.data[1] > 0) { // "Note On" event
               const noteNumber = event.data[0]; // MIDI note number
               const velocity = event.data[1];
@@ -56,17 +59,30 @@
               if (noteNumber >= 24 && noteNumber <= 72) {
                 const { note, octave } = midiNoteToLua(noteNumber);
                 const duration = deltaTime / parsed.timeDivision; // Calculate duration
+                const time = currentTime + event.deltaTime; // Calculate the time for the note
 
-                luaCode += pressnote("${note}", ${octave}, ${duration.toFixed(2)}, bpm)\n;
+                // Add note to the time slot
+                if (!notesByTime[time]) {
+                  notesByTime[time] = [];
+                }
+                notesByTime[time].push({ note, octave, duration });
               }
             }
 
-            // Rest logic: add a rest if there's a gap between notes
-            if (event.deltaTime > 0) {
-              const restDuration = event.deltaTime / parsed.timeDivision;
-              luaCode += rest(${restDuration.toFixed(2)}, bpm)\n;
-            }
+            // Update current time
+            currentTime += event.deltaTime;
           });
+        });
+
+        // Create Lua code from merged notes
+        Object.keys(notesByTime).forEach(time => {
+          notesByTime[time].forEach(({ note, octave, duration }) => {
+            luaCode += `pressnote("${note}", ${octave}, ${duration.toFixed(2)}, ${bpm})\n`;
+          });
+
+          // Add a rest if there's a gap between notes
+          const restDuration = time / parsed.timeDivision; // Rest duration based on time
+          luaCode += `rest(${restDuration.toFixed(2)}, ${bpm})\n`;
         });
 
         document.getElementById('output').textContent = luaCode;
