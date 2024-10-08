@@ -1,79 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MIDI to Lua Converter</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIDI to Lua Converter</title>
 </head>
 <body>
-  <h1>MIDI to Lua Converter</h1>
-  <p>Upload a MIDI file, and input the desired BPM to convert it to Lua code:</p>
+    <h1>MIDI to Lua Converter</h1>
+    <input type="file" id="midiFile" accept=".mid" />
+    <label for="bpm">Enter BPM:</label>
+    <input type="number" id="bpm" placeholder="120" min="30" max="300" />
+    <button id="convertButton">Convert</button>
+    <pre id="output"></pre>
 
-  <!-- File Input -->
-  <input type="file" id="midiFile" accept=".mid,.midi">
-  
-  <!-- BPM Input -->
-  <label for="bpmInput">BPM:</label>
-  <input type="number" id="bpmInput" value="120" min="40" max="300">
+    <script src="https://cdn.jsdelivr.net/npm/@tonejs/midi"></script>
+    <script>
+        const noteMappings = {
+            // Add your note mappings here
+            'C': 0, 'C#': 1, 'D': 2, 'D#': 3, 'E': 4, 'F': 5, 'F#': 6, 'G': 7, 'G#': 8, 'A': 9, 'A#': 10, 'B': 11,
+        };
 
-  <!-- Output -->
-  <pre id="output"></pre>
+        function convertMidiToLua(midiData, bpm) {
+            const midi = new Midi(midiData);
+            const outputLines = [];
+            let currentTrackNotes = [];
 
-  <script src="https://cdn.jsdelivr.net/npm/midi-parser-js"></script>
-  <script>
-    // Function to convert MIDI note number to note name and octave
-    function midiNoteToLua(noteNumber) {
-      const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-      const octave = Math.floor(noteNumber / 12) - 1;
-      const note = notes[noteNumber % 12];
-      return { note, octave };
-    }
-
-    // Function to handle MIDI file and convert it to Lua
-    document.getElementById('midiFile').addEventListener('change', function (event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const midiArray = new Uint8Array(e.target.result);
-        const parsed = MidiParser.parse(midiArray); // Parse the MIDI file
-
-        const bpm = parseInt(document.getElementById('bpmInput').value) || 120;
-        let luaCode = "";
-        let currentTime = 0;  // Current time in ticks
-
-        // Loop through tracks
-        parsed.track.forEach(track => {
-          track.event.forEach(event => {
-            // Only process "Note On" and "Note Off" events
-            if (event.type === 9 && event.data[1] > 0) { // "Note On" event
-              const noteNumber = event.data[0]; // MIDI note number
-              const velocity = event.data[1];
-              const deltaTime = event.deltaTime;
-
-              // Ignore notes below C1 (MIDI note 24) and above C5 (MIDI note 72)
-              if (noteNumber >= 24 && noteNumber <= 72) {
-                const { note, octave } = midiNoteToLua(noteNumber);
-                const duration = deltaTime / parsed.timeDivision; // Calculate duration
-
-                luaCode += `pressnote("${note}", ${octave}, ${duration.toFixed(2)}, bpm)\n`;
-              }
+            // Function to process and merge notes
+            function processTrack(track) {
+                const notes = track.notes.filter(note => note.midi >= 24 && note.midi <= 72); // C1 (MIDI 24) to C5 (MIDI 72)
+                if (notes.length > 0) {
+                    currentTrackNotes.push(...notes);
+                }
             }
 
-            // Rest logic: add a rest if there's a gap between notes
-            if (event.deltaTime > 0) {
-              const restDuration = event.deltaTime / parsed.timeDivision;
-              luaCode += `rest(${restDuration.toFixed(2)}, bpm)\n`;
+            // Process each track
+            midi.tracks.forEach(track => {
+                if (!track.name.toLowerCase().includes('drum')) {  // Ignore drum tracks
+                    processTrack(track);
+                } else {
+                    // Handle drum tracks separately if needed, or ignore them
+                }
+            });
+
+            // Generate output lines for notes
+            currentTrackNotes.forEach(note => {
+                const octave = Math.floor(note.midi / 12) - 1; // Convert MIDI number to octave
+                const noteName = Object.keys(noteMappings).find(key => noteMappings[key] === (note.midi % 12));
+                const beats = note.duration / midi.header.tempos[0].bpm; // Adjust beat calculation as necessary
+                outputLines.push(`pressnote("${noteName}", ${octave}, ${beats.toFixed(2)}, ${bpm})`);
+            });
+
+            return outputLines.join('\n');
+        }
+
+        document.getElementById('convertButton').addEventListener('click', async () => {
+            const fileInput = document.getElementById('midiFile');
+            const bpmInput = document.getElementById('bpm');
+            const output = document.getElementById('output');
+
+            if (!fileInput.files.length) {
+                output.textContent = 'Please upload a MIDI file.';
+                return;
             }
-          });
+
+            const midiFile = fileInput.files[0];
+            const bpm = bpmInput.value || 120; // Default to 120 BPM if not specified
+            const midiData = await midiFile.arrayBuffer();
+
+            const luaCode = convertMidiToLua(midiData, bpm);
+            output.textContent = luaCode;
         });
-
-        document.getElementById('output').textContent = luaCode;
-      };
-
-      reader.readAsArrayBuffer(file); // Read MIDI file as ArrayBuffer
-    });
-  </script>
+    </script>
 </body>
 </html>
