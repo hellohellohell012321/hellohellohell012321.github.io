@@ -45,7 +45,6 @@
 
         // Loop through tracks
         parsed.track.forEach(track => {
-          let lastNoteEndTime = 0;  // To track when the last note ended
           let notesToPlay = [];  // To hold notes that should be played simultaneously
 
           track.event.forEach(event => {
@@ -57,7 +56,6 @@
             // Only process "Note On" events
             if (event.type === 9 && event.data[1] > 0) { // "Note On" event
               const noteNumber = event.data[0]; // MIDI note number
-              const velocity = event.data[1];
 
               // Ignore notes below C1 (MIDI note 24) and above C5 (MIDI note 72)
               if (noteNumber >= 24 && noteNumber <= 72) {
@@ -66,23 +64,21 @@
 
                 // Store note information to play it later
                 notesToPlay.push({ note, octave, duration });
-                lastNoteEndTime = currentTime + duration; // Update the end time for the last note
               }
             }
 
-            // Process "Note Off" events (if needed) or add a rest if there's a gap
+            // Process "Note Off" events or gaps between notes
             if (event.type === 8 || (event.deltaTime > 0 && notesToPlay.length > 0)) {
-              // If there are notes to play, output them first
-              notesToPlay.forEach(n => {
-                luaCode += `pressnote("${n.note}", ${n.octave}, ${n.duration.toFixed(2)}, bpm)\n`;
-              });
-              notesToPlay = []; // Clear the notes after processing
-
-              // If there's a gap, add a rest
-              if (event.deltaTime > 0) {
-                const restDuration = event.deltaTime / parsed.timeDivision;
-                luaCode += `rest(${restDuration.toFixed(2)}, bpm)\n`;
+              // Play all collected notes before the rest
+              if (notesToPlay.length > 0) {
+                notesToPlay.forEach(n => {
+                  luaCode += `pressnote("${n.note}", ${n.octave}, ${n.duration.toFixed(2)}, bpm)\n`;
+                });
+                notesToPlay = []; // Clear the notes after processing
               }
+
+              // Insert a rest before the next action
+              luaCode += `rest(0.25, bpm)\n`; // Always rest for 0.25 beats
             }
           });
 
