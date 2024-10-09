@@ -43,6 +43,7 @@
         const secondsPerBeat = 60 / bpm; // How many seconds per beat
         let luaCode = "";
         let currentTime = 0;  // Current time in ticks
+        let lastEventTime = 0; // Track the last event's time to calculate rest
 
         // Loop through tracks
         parsed.track.forEach(track => {
@@ -58,14 +59,21 @@
                 const { note, octave } = midiNoteToLua(noteNumber);
                 const beats = deltaTime / parsed.timeDivision; // Calculate duration in beats
 
-                luaCode += `pressnote("${note}", ${octave}, ${beats.toFixed(2)}, bpm)\n`;
+                // Skip very short notes (avoid cases like 0.01 beats)
+                if (beats >= 0.1) {
+                  luaCode += `pressnote("${note}", ${octave}, ${beats.toFixed(2)}, bpm)\n`;
+                }
               }
             }
 
             // Rest logic: add a rest if there's a gap between notes
             if (event.deltaTime > 0) {
               const restBeats = event.deltaTime / parsed.timeDivision; // Rest duration in beats
-              luaCode += `rest(${restBeats.toFixed(2)}, bpm)\n`;
+
+              // Avoid excessive rests at the beginning or tiny unnecessary rests
+              if (restBeats >= 0.1) {
+                luaCode += `rest(${restBeats.toFixed(2)}, bpm)\n`;
+              }
             }
           });
         });
