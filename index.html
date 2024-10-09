@@ -40,6 +40,7 @@
         const parsed = MidiParser.parse(midiArray); // Parse the MIDI file
 
         const bpm = parseInt(document.getElementById('bpmInput').value) || 120;
+        const secondsPerBeat = 60 / bpm; // How many seconds per beat
         let luaCode = "";
         let currentTime = 0;  // Current time in ticks
 
@@ -55,16 +56,16 @@
               // Ignore notes below C1 (MIDI note 24) and above C5 (MIDI note 72)
               if (noteNumber >= 24 && noteNumber <= 72) {
                 const { note, octave } = midiNoteToLua(noteNumber);
-                const duration = deltaTime / parsed.timeDivision; // Calculate duration
+                const beats = deltaTime / parsed.timeDivision; // Calculate duration in beats
 
-                luaCode += `pressnote("${note}", ${octave}, ${duration.toFixed(2)}, bpm)\n`;
+                luaCode += `pressnote("${note}", ${octave}, ${beats.toFixed(2)}, bpm)\n`;
               }
             }
 
             // Rest logic: add a rest if there's a gap between notes
             if (event.deltaTime > 0) {
-              const restDuration = event.deltaTime / parsed.timeDivision;
-              luaCode += `rest(${restDuration.toFixed(2)}, bpm)\n`;
+              const restBeats = event.deltaTime / parsed.timeDivision; // Rest duration in beats
+              luaCode += `rest(${restBeats.toFixed(2)}, bpm)\n`;
             }
           });
         });
