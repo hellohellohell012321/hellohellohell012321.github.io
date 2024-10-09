@@ -9,7 +9,7 @@
         textarea { width: 100%; height: 200px; }
         button { margin-top: 10px; }
     </style>
-    <script src="https://cdn.rawgit.com/cifkao/midi-parser-js/master/dist/MidiParser.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tonejs/midi/dist/Midi.min.js"></script>
 </head>
 <body>
     <h1>MIDI to Lua Converter</h1>
@@ -19,7 +19,7 @@
     <textarea id="luaOutput" readonly></textarea>
 
     <script>
-        document.getElementById("convertBtn").onclick = function() {
+        document.getElementById("convertBtn").onclick = async function() {
             const fileInput = document.getElementById("fileInput");
             const luaOutput = document.getElementById("luaOutput");
             
@@ -29,29 +29,21 @@
             }
 
             const file = fileInput.files[0];
-            const reader = new FileReader();
+            const arrayBuffer = await file.arrayBuffer();
+            const midi = new Midi(arrayBuffer);
+            let luaCode = "local bpm = 120\n\n";  // Default BPM
             
-            reader.onload = function(event) {
-                const midiData = event.target.result;
-                const midi = new MidiParser.Midi(midiData);
-                let luaCode = "local bpm = 120\n\n";  // Default BPM
-                
-                midi.tracks.forEach(track => {
-                    let lastTime = 0;
-                    track.forEach(event => {
-                        if (event.type === 'noteOn') {
-                            const note = MidiParser.MidiNoteNames[event.noteNumber];
-                            const beats = (event.deltaTime / midi.header.ticksPerBeat);
-                            luaCode += `pressnote("${note}", 1, ${beats.toFixed(2)}, bpm)\n`;
-                        }
-                    });
-                    luaCode += "rest(4, bpm)  -- Wait for 4 beats\n\n"; // Add rest after each track
+            midi.tracks.forEach(track => {
+                let lastTime = 0;
+                track.notes.forEach(note => {
+                    const noteName = note.name;
+                    const beats = (note.time / midi.header.ticksPerBeat);
+                    luaCode += `pressnote("${noteName}", 1, ${beats.toFixed(2)}, bpm)\n`;
                 });
-                
-                luaOutput.value = luaCode;
-            };
-
-            reader.readAsArrayBuffer(file);
+                luaCode += "rest(4, bpm)  -- Wait for 4 beats\n\n"; // Add rest after each track
+            });
+            
+            luaOutput.value = luaCode;
         };
     </script>
 </body>
