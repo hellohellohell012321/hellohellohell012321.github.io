@@ -9,7 +9,7 @@
         textarea { width: 100%; height: 200px; }
         button { margin-top: 10px; }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/@tonejs/midi/dist/Midi.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tonejs/midi/dist/Midi.js"></script>
 </head>
 <body>
     <h1>MIDI to Lua Converter</h1>
@@ -33,27 +33,39 @@
             let luaCode = "local bpm = 120\n\n";  // Default BPM
 
             try {
+                // Load the MIDI data
                 const midi = new Midi(arrayBuffer);
+                const allNotes = [];
 
+                // Collect all notes from all tracks
                 midi.tracks.forEach(track => {
-                    if (track.notes.length === 0) {
-                        luaCode += "-- No notes in this track\n";
-                        return; // Skip tracks without notes
-                    }
-                    
-                    let lastTime = 0;
                     track.notes.forEach(note => {
-                        const noteName = note.name;
-                        const beats = (note.time / midi.header.ticksPerBeat);
-                        luaCode += `pressnote("${noteName}", 1, ${beats.toFixed(2)}, bpm)\n`;
+                        allNotes.push({
+                            name: note.name,
+                            time: note.time,
+                            duration: note.duration,
+                            // We can include more properties if needed
+                        });
                     });
-                    luaCode += "rest(4, bpm)  -- Wait for 4 beats\n\n"; // Add rest after each track
+                });
+
+                // Sort notes by their start time
+                allNotes.sort((a, b) => a.time - b.time);
+
+                let lastTime = 0; // To keep track of time between notes
+                allNotes.forEach(note => {
+                    const beats = (note.time / midi.header.ticksPerBeat);
+                    // Add rest if there's a gap between notes
+                    if (beats > lastTime + 0.1) {
+                        luaCode += `rest(${(beats - lastTime).toFixed(2)}, bpm)\n`;
+                    }
+                    luaCode += `pressnote("${note.name}", 1, ${beats.toFixed(2)}, bpm)\n`;
+                    lastTime = beats; // Update last time
                 });
 
                 luaOutput.value = luaCode;
             } catch (error) {
                 alert("Error parsing MIDI file: " + error.message);
-                console.error("MIDI Parsing Error:", error);
             }
         };
     </script>
