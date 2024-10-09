@@ -30,20 +30,31 @@
 
             const file = fileInput.files[0];
             const arrayBuffer = await file.arrayBuffer();
-            const midi = new Midi(arrayBuffer);
             let luaCode = "local bpm = 120\n\n";  // Default BPM
-            
-            midi.tracks.forEach(track => {
-                let lastTime = 0;
-                track.notes.forEach(note => {
-                    const noteName = note.name;
-                    const beats = (note.time / midi.header.ticksPerBeat);
-                    luaCode += `pressnote("${noteName}", 1, ${beats.toFixed(2)}, bpm)\n`;
+
+            try {
+                const midi = new Midi(arrayBuffer);
+
+                midi.tracks.forEach(track => {
+                    if (track.notes.length === 0) {
+                        luaCode += "-- No notes in this track\n";
+                        return; // Skip tracks without notes
+                    }
+                    
+                    let lastTime = 0;
+                    track.notes.forEach(note => {
+                        const noteName = note.name;
+                        const beats = (note.time / midi.header.ticksPerBeat);
+                        luaCode += `pressnote("${noteName}", 1, ${beats.toFixed(2)}, bpm)\n`;
+                    });
+                    luaCode += "rest(4, bpm)  -- Wait for 4 beats\n\n"; // Add rest after each track
                 });
-                luaCode += "rest(4, bpm)  -- Wait for 4 beats\n\n"; // Add rest after each track
-            });
-            
-            luaOutput.value = luaCode;
+
+                luaOutput.value = luaCode;
+            } catch (error) {
+                alert("Error parsing MIDI file: " + error.message);
+                console.error("MIDI Parsing Error:", error);
+            }
         };
     </script>
 </body>
