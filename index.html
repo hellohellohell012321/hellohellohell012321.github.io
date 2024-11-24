@@ -3,71 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MIDI to Lua Converter</title>
+    <title>Lua Code Simplifier</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        textarea { width: 100%; height: 200px; }
-        button { margin-top: 10px; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border: 1px solid #ddd;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/@tonejs/midi/dist/Midi.js"></script>
 </head>
 <body>
-    <h1>MIDI to Lua Converter</h1>
-    <input type="file" id="fileInput" accept=".mid" />
-    <button id="convertBtn">Convert MIDI to Lua</button>
-    <h2>Generated Lua Code:</h2>
-    <textarea id="luaOutput" readonly></textarea>
-
-    <script>
-        document.getElementById("convertBtn").onclick = async function() {
-            const fileInput = document.getElementById("fileInput");
-            const luaOutput = document.getElementById("luaOutput");
-            
-            if (fileInput.files.length === 0) {
-                alert("Please select a MIDI file.");
-                return;
-            }
-
-            const file = fileInput.files[0];
-            const arrayBuffer = await file.arrayBuffer();
-            let luaCode = "local bpm = 120\n\n";  // Default BPM
-
-            try {
-                // Load the MIDI data
-                const midi = new Midi(arrayBuffer);
-                const allNotes = [];
-
-                // Collect all notes from all tracks
-                midi.tracks.forEach(track => {
-                    track.notes.forEach(note => {
-                        allNotes.push({
-                            name: note.name,
-                            time: note.time,
-                            duration: note.duration,
-                            // We can include more properties if needed
-                        });
-                    });
-                });
-
-                // Sort notes by their start time
-                allNotes.sort((a, b) => a.time - b.time);
-
-                let lastTime = 0; // To keep track of time between notes
-                allNotes.forEach(note => {
-                    const beats = (note.time / midi.header.ticksPerBeat);
-                    // Add rest if there's a gap between notes
-                    if (beats > lastTime + 0.1) {
-                        luaCode += `rest(${(beats - lastTime).toFixed(2)}, bpm)\n`;
-                    }
-                    luaCode += `pressnote("${note.name}", 1, ${beats.toFixed(2)}, bpm)\n`;
-                    lastTime = beats; // Update last time
-                });
-
-                luaOutput.value = luaCode;
-            } catch (error) {
-                alert("Error parsing MIDI file: " + error.message);
-            }
-        };
-    </script>
+    <h1>Lua Code Simplifier</h1>
+    <p>Paste your Lua code below:</p>
+    <textarea id="inputCode" placeholder="Enter Lua code here..."></textarea>
+    <button onclick="simplifyCode()">Simplify Code</button>
+    <h2>Result:</h2>
+    <pre id="outputCode">Your simplified code will appear here.</pre>
+    <script src="script.js"></script>
 </body>
 </html>
