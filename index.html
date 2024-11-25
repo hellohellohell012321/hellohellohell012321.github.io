@@ -60,6 +60,8 @@
                             i++;
                         }
                         result.push(`rest(${dashCount}, bpm)`); // Dashes = beats.
+                    } else if (next === "[") {
+                        result.push(`rest(0.25, bpm)`); // Rest before brackets if adjacent.
                     }
                 } else if (current === "[") {
                     // Handle notes in square brackets
@@ -69,11 +71,30 @@
                         bracketContent += input[i];
                         i++;
                     }
+
                     // Split the content and add each keypress
                     const bracketNotes = bracketContent.split("");
                     bracketNotes.forEach(note => {
                         result.push(`keypress("${note}", 0.15, bpm)`);
                     });
+
+                    // Check the next character for rest logic
+                    const next = input[i + 1];
+                    if (next === "]") {
+                        result.push(`rest(0.25, bpm)`); // Rest between two square brackets.
+                    } else if (next === " ") {
+                        result.push(`rest(0.25, bpm)`); // Rest between two square brackets with space.
+                        i++; // Skip space character.
+                    } else if (next === "-") {
+                        let dashCount = 0;
+                        while (input[i + 1] === "-") {
+                            dashCount++;
+                            i++;
+                        }
+                        result.push(`rest(${dashCount}, bpm)`); // Dashes = beats.
+                    } else if (next === "[") {
+                        result.push(`rest(0.25, bpm)`); // Rest between consecutive square brackets.
+                    }
                 }
 
                 i++;
@@ -84,7 +105,7 @@
 
         function isNote(char) {
             // Identify valid notes (letters, symbols for keys, etc.)
-            return /[A-Za-z%!]/.test(char);
+            return /[A-Za-z%!*]/.test(char);
         }
     </script>
 </body>
