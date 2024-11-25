@@ -3,87 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Piano Sheet Music Converter</title>
+    <title>Virtual Piano Sheet Converter</title>
     <script>
-        // The function that converts the input to keypresses and rests
-        function convertToKeypress(input, bpm) {
-            let output = '';
-            let prevCharWasBracket = false;
+        function convertSheetToKeypress(input) {
+            const bpm = 120; // You can adjust the bpm (beats per minute) here
+            const output = [];
+            let previousChar = '';
 
-            // Loop through the input string
+            // Iterate over the input and process the characters
             for (let i = 0; i < input.length; i++) {
-                let currentChar = input[i];
+                const char = input[i];
+                const nextChar = input[i + 1];
 
-                // If the current character is a letter, number, or symbol
-                if (/[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(currentChar)) {
-                    // If the previous character wasn't a bracket, add a rest of 0.25 beats
-                    if (i > 0 && input[i - 1] !== '[' && input[i - 1] !== ' ') {
-                        output += `rest(0.25, bpm)\n`;
-                    }
-
-                    // Add the keypress for the current character
-                    output += `keypress("${currentChar}", 0.15, bpm)\n`;
-                    prevCharWasBracket = false;
-                }
-
-                // If the current character is a space
-                else if (currentChar === ' ') {
-                    // If the previous character was a bracket, do nothing (no rest needed)
-                    if (!prevCharWasBracket) {
-                        // Add a 0.5 rest when space is encountered (separating two notes)
-                        output += `rest(0.5, bpm)\n`;
-                    }
-                    prevCharWasBracket = false;
-                }
-
-                // If the current character is a dash (indicating a full beat rest between two notes)
-                else if (currentChar === '-') {
-                    output += `rest(1, bpm)\n`;  // 1 beat rest for dash
-                    prevCharWasBracket = false;
-                }
-
-                // Handle square brackets and contents inside them
-                else if (currentChar === '[') {
-                    let bracketContent = '';
-                    i++;  // Move to the next character after '['
-                    while (i < input.length && input[i] !== ']') {
-                        bracketContent += input[i];
+                // Check for note or bracketed note sequence
+                if (char === '[') {
+                    let noteSequence = '';
+                    i++; // Skip '['
+                    while (input[i] !== ']' && i < input.length) {
+                        noteSequence += input[i];
                         i++;
                     }
-                    // After exiting the loop, we expect the closing ']'
-                    if (i < input.length && input[i] === ']') {
-                        // Handle each character inside the brackets individually
-                        for (let j = 0; j < bracketContent.length; j++) {
-                            let char = bracketContent[j];
-                            output += `keypress("${char}", 0.15, bpm)\n`;
-                        }
-                        prevCharWasBracket = true;
+                    i++; // Skip ']'
+
+                    if (nextChar === ' ') {
+                        output.push(`keypress("${noteSequence[0]}", 0.15, bpm)`);  // First keypress in bracket
+                        output.push(`keypress("${noteSequence[1]}", 0.15, bpm)`);  // Second keypress in bracket
+                        output.push(`rest(0.5, bpm)`);  // 0.5 rest after bracketed notes with space
+                    }
+                } 
+                else if (char === ' ' && previousChar !== ']') {
+                    output.push(`rest(0.5, bpm)`);  // Space between notes
+                } 
+                else if (char === '-') {
+                    output.push(`rest(1, bpm)`); // Dash, representing 1 beat rest
+                } 
+                else {
+                    output.push(`keypress("${char}", 0.15, bpm)`); // Regular note press
+                    if (nextChar !== ' ' && nextChar !== ']') {
+                        output.push(`rest(0.25, bpm)`);  // 0.25 rest between notes when not brackets or spaces
                     }
                 }
+                previousChar = char;
             }
 
-            return output;
+            return output.join('\n');
         }
 
-        // Function to handle button click and display result
-        function handleConvertClick() {
-            const input = document.getElementById('sheetMusicInput').value;
-            const bpm = document.getElementById('bpmInput').value;
-            const result = convertToKeypress(input, bpm);
-            document.getElementById('result').textContent = result;
+        function handleConversion() {
+            const input = document.getElementById('sheetInput').value;
+            const output = convertSheetToKeypress(input);
+            document.getElementById('output').innerText = output;
         }
     </script>
 </head>
 <body>
-    <h1>Piano Sheet Music Converter</h1>
-    <label for="sheetMusicInput">Enter Sheet Music:</label>
-    <input type="text" id="sheetMusicInput" placeholder="e.g. OT%uO!Su%OS!fO%Sf[f!*OSH]">
-    <br>
-    <label for="bpmInput">Enter BPM:</label>
-    <input type="number" id="bpmInput" placeholder="e.g. 120" value="120">
-    <br><br>
-    <button onclick="handleConvertClick()">Convert</button>
-    <h2>Converted Keypresses and Rests:</h2>
-    <pre id="result"></pre>
+    <h1>Virtual Piano Sheet Music Converter</h1>
+    <textarea id="sheetInput" rows="4" cols="50"></textarea><br><br>
+    <button onclick="handleConversion()">Convert</button>
+    <pre id="output"></pre>
 </body>
 </html>
