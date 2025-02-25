@@ -3,87 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Piano Sheet Music Converter</title>
-    <script>
-        // The function that converts the input to keypresses and rests
-        function convertToKeypress(input, bpm) {
-            let output = '';
-            let prevCharWasBracket = false;
-
-            // Loop through the input string
-            for (let i = 0; i < input.length; i++) {
-                let currentChar = input[i];
-
-                // If the current character is a letter, number, or symbol
-                if (/[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(currentChar)) {
-                    // If the previous character wasn't a bracket, add a rest of 0.25 beats
-                    if (i > 0 && input[i - 1] !== '[' && input[i - 1] !== ' ') {
-                        output += `rest(0.25, bpm)\n`;
-                    }
-
-                    // Add the keypress for the current character
-                    output += `keypress("${currentChar}", 0.15, bpm)\n`;
-                    prevCharWasBracket = false;
-                }
-
-                // If the current character is a space
-                else if (currentChar === ' ') {
-                    // If the previous character was a bracket, do nothing (no rest needed)
-                    if (!prevCharWasBracket) {
-                        // Add a 0.5 rest when space is encountered (separating two notes)
-                        output += `rest(0.5, bpm)\n`;
-                    }
-                    prevCharWasBracket = false;
-                }
-
-                // If the current character is a dash (indicating a full beat rest between two notes)
-                else if (currentChar === '-') {
-                    output += `rest(1, bpm)\n`;  // 1 beat rest for dash
-                    prevCharWasBracket = false;
-                }
-
-                // Handle square brackets and contents inside them
-                else if (currentChar === '[') {
-                    let bracketContent = '';
-                    i++;  // Move to the next character after '['
-                    while (i < input.length && input[i] !== ']') {
-                        bracketContent += input[i];
-                        i++;
-                    }
-                    // After exiting the loop, we expect the closing ']'
-                    if (i < input.length && input[i] === ']') {
-                        // Handle each character inside the brackets individually
-                        for (let j = 0; j < bracketContent.length; j++) {
-                            let char = bracketContent[j];
-                            output += `keypress("${char}", 0.15, bpm)\n`;
-                        }
-                        prevCharWasBracket = true;
-                    }
-                }
-            }
-
-            return output;
-        }
-
-        // Function to handle button click and display result
-        function handleConvertClick() {
-            const input = document.getElementById('sheetMusicInput').value;
-            const bpm = document.getElementById('bpmInput').value;
-            const result = convertToKeypress(input, bpm);
-            document.getElementById('result').textContent = result;
-        }
-    </script>
+    <title>Virtual Piano to Lua Converter</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        textarea { width: 80%; height: 200px; margin-bottom: 10px; }
+        button { padding: 10px 20px; font-size: 16px; }
+        pre { text-align: left; background: #f4f4f4; padding: 10px; border-radius: 5px; }
+    </style>
 </head>
 <body>
-    <h1>Piano Sheet Music Converter</h1>
-    <label for="sheetMusicInput">Enter Sheet Music:</label>
-    <input type="text" id="sheetMusicInput" placeholder="e.g. OT%uO!Su%OS!fO%Sf[f!*OSH]">
-    <br>
-    <label for="bpmInput">Enter BPM:</label>
-    <input type="number" id="bpmInput" placeholder="e.g. 120" value="120">
-    <br><br>
-    <button onclick="handleConvertClick()">Convert</button>
-    <h2>Converted Keypresses and Rests:</h2>
-    <pre id="result"></pre>
+    <h1>Virtual Piano Sheet Music to Lua Converter</h1>
+    <textarea id="input" placeholder="Enter virtual piano sheet music..."></textarea><br>
+    <button onclick="convertToLua()">Convert to Lua</button>
+    <h2>Lua Output:</h2>
+    <pre id="output"></pre>
+    
+    <script src="script.js"></script>
 </body>
 </html>
