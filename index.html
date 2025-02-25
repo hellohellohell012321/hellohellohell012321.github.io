@@ -5,19 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Virtual Piano to Lua Converter</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
-        textarea { width: 80%; height: 200px; margin-bottom: 10px; }
-        button { padding: 10px 20px; font-size: 16px; }
-        pre { text-align: left; background: #f4f4f4; padding: 10px; border-radius: 5px; }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        textarea {
+            width: 80%;
+            height: 200px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        pre {
+            text-align: left;
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            width: 80%;
+            margin: 0 auto;
+            white-space: pre-wrap;
+        }
     </style>
 </head>
 <body>
-    <h1>Virtual Piano Sheet Music to Lua Converter</h1>
-    <textarea id="input" placeholder="Enter virtual piano sheet music..."></textarea><br>
-    <button onclick="convertToLua()">Convert to Lua</button>
-    <h2>Lua Output:</h2>
+
+    <h2>Virtual Piano to Lua Converter</h2>
+    <textarea id="input" placeholder="Enter virtual piano sheet music here..."></textarea>
+    <br>
+    <button onclick="convertToLua()">Convert</button>
+    <h3>Converted Lua Script:</h3>
     <pre id="output"></pre>
-    
+
     <script src="script.js"></script>
+
 </body>
 </html>
