@@ -47,7 +47,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
+            z-index: -2; /* Changed from -1 to -2 so it sits behind the overlay */
             background-size: cover;
             background-position: center;
             transition: opacity 0.5s;
@@ -60,7 +60,7 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(to bottom, rgba(18, 18, 18, 0.3), var(--bg));
-            z-index: -1;
+            z-index: -1; /* Ensure overlay is always above backgrounds but below content */
         }
         
         #hero-title {
@@ -335,7 +335,7 @@
         <div class="bg-overlay"></div>
         <div class="container">
             <h1 id="hero-title">hellohellohell012321</h1>
-            <p id="hero-subtitle">i can put whatever i want here and you cant do anything about it</p>
+            <p id="hero-subtitle">owner of stxllar scripts (:</p>
             <a href="https://guns.lol/hellohellohell0" target="_blank" style="color: #fff; text-decoration: underline; font-weight: 500; margin-top: 1rem; display: inline-block; opacity: 0; animation: fadeIn 1s forwards 1.5s;">guns.lol/hellohellohell0</a>
         </div>
     </section>
@@ -385,9 +385,8 @@
         // =====================================================================
         // Add your background image URLs here (1920x1080 recommended)
         const backgroundImages = [
-            "/api/placeholder/1920/1080", // Replace with: "images/background1.jpg"
-            "/api/placeholder/1920/1080", // Replace with: "images/background2.jpg"
-            "/api/placeholder/1920/1080"  // Replace with: "images/background3.jpg"
+            "images/bg1.png", // Replace with: "images/background1.jpg"
+            "images/bg2.png", // Replace with: "images/background2.jpg"
         ];
         
         // =====================================================================
@@ -528,8 +527,9 @@
                 
                 // Remove old background after transition
                 setTimeout(() => {
-                    if (bgWrapper.parentNode) {
-                        bgWrapper.parentNode.removeChild(bgWrapper);
+                    const oldBgs = document.querySelectorAll('.bg-wrapper');
+                    if (oldBgs.length > 1) {
+                        oldBgs[0].remove();
                     }
                 }, 500);
             }, 50);
