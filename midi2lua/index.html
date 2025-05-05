@@ -121,6 +121,18 @@
       background-color: #555;
     }
 
+    #homeButton {
+    background-color: #444;
+    width: 250px;
+    height: 40px;
+    font-size: 1rem;
+    line-height: 0px;
+    }
+
+    #homeButton:hover {
+      background-color: #555;
+    }
+
     #copyButton, #pasteButton, #txtButton {
       background-color: #444;
     }
@@ -238,6 +250,7 @@
 <body>
   <div class="wrapper">
     <div class="container">
+      <button id="homeButton" onclick="window.location.href='../'">return to home page</button>
       <h1>midi2lua - a revolutionary roblox autoplaying tool.</h1>
       <label for="bpmInput">enter bpm:</label>
       <input type="number" id="bpmInput" placeholder="Enter BPM" min="1" value="120" />
