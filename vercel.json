@@ -1,5 +1,5 @@
 {
-  "rewrites": [],
-  "cleanUrls": true,
-  "trailingSlash": false
-}
+    "rewrites": [],
+    "cleanUrls": true,
+    "trailingSlash": false
+  }

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Piano to Lua Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            color: #222;
+        }
+        p {
+            max-width: 700px;
+            margin: 0 auto 20px;
+            line-height: 1.6;
+        }
+        .container {
+            background: white;
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        textarea, input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        pre {
+            background: #eee;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: left;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>VP2LUA - Virtual Piano to Lua Converter</h1>
+        <p>
+            VP2LUA is a tool created by <b>hellohellohell012321</b> that converts Virtual Piano sheet music into Lua code. This code can be executed in an executor, allowing you to autoplay songs. It is a branch off of the TALENTLESS GUI, a piano autoplayer which uses the same method of fake-playing the virtual piano.
+        </p>
+
+        <h3>Important Notes:</h3>
+        <ul style="text-align: left; max-width: 700px; margin: auto;">
+            <li>Some songs with funky rhythms (triplets, 0.75 beat rests) may not be detected properly when converting the MIDI file into virtual piano sheets.</li>
+            <li>If this happens, try putting your MIDI into half-time mode to slow notes by 2x but remember that it likely will not fix the issue.</li>
+            <li>Remember to double the BPM in the final product if you use half-time mode.</li>
+        </ul>
+
+        <button onclick="location.href='./midihalf.html'">Go to MIDI Half-Time Splitter</button>
+
+        <h2>Convert Virtual Piano Sheet to Lua</h2>
+
+        <label for="input"><b>Enter Virtual Piano Sheet:</b></label><br>
+        <textarea id="input" rows="10" placeholder="Enter virtual piano sheet... [If you do not have a virtual piano sheet but you have a MIDI file of your song, convert it into a virtual piano sheet on VPSHEETS.COM/CONVERTER]"></textarea><br>
+
+        <label for="bpmInput"><b>BPM:</b></label><br>
+        <input type="number" id="bpmInput" value="120" /><br><br>
+
+        <button onclick="convertToLua()">Convert</button>
+        <button onclick="copyOutput()">Copy Output</button>
+
+        <h3>Output:</h3>
+        <pre id="output"></pre>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>

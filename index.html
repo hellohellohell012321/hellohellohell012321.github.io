@@ -3,37 +3,623 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Virtual Piano to Lua Converter</title>
+    <title>RobloxScripts Hub</title>
     <style>
+        /* 
+        * MAIN COLOR SCHEME
+        * You can modify these variables to change the entire color scheme
+        */
+        :root {
+            --primary: #333333;
+            --secondary: #222222;
+            --accent: #444444;
+            --dark: #111111;
+            --light: #EEEEEE;
+            --bg: #121212;
+            --card-bg: rgba(30, 30, 30, 0.8);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
+            background-color: var(--bg);
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        #hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .bg-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-size: cover;
+            background-position: center;
+            transition: opacity 0.5s;
+        }
+        
+        .bg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(18, 18, 18, 0.3), var(--bg));
+            z-index: -1;
+        }
+        
+        #hero-title {
+            font-size: 5rem;
+            font-weight: 800;
             text-align: center;
-            padding: 20px;
+            color: white;
+            text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            transform: translateY(-50px);
+            opacity: 0;
+            animation: fadeIn 1s forwards 0.5s;
         }
-        textarea {
-            width: 80%;
-            height: 200px;
-            margin-bottom: 10px;
+        
+        #hero-subtitle {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-top: 1rem;
+            color: var(--light);
+            opacity: 0;
+            animation: fadeIn 1s forwards 1s;
         }
-        button {
-            padding: 10px;
-            font-size: 16px;
-            cursor: pointer;
+        
+        /* Removed guns-link styles as we're using a simple text link instead */
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        pre {
-            text-align: left;
-            background: #f4f4f4;
-            padding: 10px;
-            border-radius: 5px;
-            width: 80%;
+        
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
-            white-space: pre-wrap;
+            padding: 2rem;
+        }
+        
+        .section {
+            padding: 3rem 0; /* Reduced padding between sections */
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(to right, #444, #222);
+            border-radius: 2px;
+        }
+        
+        .script-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3.5rem; /* Increased spacing after section title */
+        }
+        
+        .script-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        /* Lighter background for tool cards */
+        #tools-grid .script-card {
+            background-color: rgba(40, 40, 40, 0.8);
+        }
+        
+        .script-card.animate {
+            animation: cardFadeIn 0.6s forwards;
+        }
+        
+        .script-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .script-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-bottom: 3px solid var(--accent);
+        }
+        
+        .script-info {
+            padding: 1.5rem;
+        }
+        
+        .script-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+        
+        .script-desc {
+            font-size: 0.9rem;
+            color: #ccc;
+            margin-bottom: 1rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.6rem 1.2rem;
+            background: linear-gradient(to right, #333, #555);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(to right, #222, #444);
+            margin-left: 0.5rem;
+        }
+        
+        .script-buttons {
+            display: flex;
+            margin-top: 1rem;
+        }
+        
+        /* Add script button and modal removed as requested */
+        
+        @keyframes cardFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            #hero-title {
+                font-size: 3rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .script-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 1.5rem;
+            }
+        }
+        
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem;
+            z-index: 100;
+            transition: background 0.3s;
+        }
+        
+        header.scrolled {
+            background-color: rgba(18, 18, 18, 0.9);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-link {
+            color: #ddd;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-link:hover {
+            color: white;
+        }
+        
+        /* Footer Styles */
+        footer {
+            background-color: var(--dark);
+            padding: 3rem 0;
+            text-align: center;
+            border-top: 1px solid var(--accent);
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .social-btn {
+            display: inline-block;
+            padding: 0.8rem 1.8rem;
+            background: linear-gradient(to right, #333, #444);
+            color: white;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .social-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(to right, #444, #555);
+        }
+        
+        .footer-text {
+            color: #999;
+            font-size: 0.9rem;
+            margin-top: 2rem;
         }
     </style>
 </head>
 <body>
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo">RobloxScripts Hub</a>
+            <div class="nav-links">
+                <a href="#featured" class="nav-link">Featured</a>
+                <a href="#tools" class="nav-link">Tools</a>
+                <a href="#all-scripts" class="nav-link">All Scripts</a>
+            </div>
+        </div>
+    </header>
 
-    <h2>hi</h2>
+    <section id="hero">
+        <div class="bg-wrapper"></div>
+        <div class="bg-overlay"></div>
+        <div class="container">
+            <h1 id="hero-title">RobloxScripts Hub</h1>
+            <p id="hero-subtitle">Premium Roblox Scripts & Tools Collection</p>
+            <a href="https://guns.lol/username" style="color: #fff; text-decoration: underline; font-weight: 500; margin-top: 1rem; display: inline-block; opacity: 0; animation: fadeIn 1s forwards 1.5s;">guns.lol/username</a>
+        </div>
+    </section>
 
+    <section id="featured" class="section">
+        <div class="container">
+            <h2 class="section-title">Featured Scripts</h2>
+            <div class="script-grid" id="featured-grid">
+                <!-- Script cards will be dynamically added here -->
+            </div>
+        </div>
+    </section>
+
+    <section id="tools" class="section">
+        <div class="container">
+            <h2 class="section-title">Tools</h2>
+            <div class="script-grid" id="tools-grid">
+                <!-- Tool cards will be dynamically added here -->
+            </div>
+        </div>
+    </section>
+
+    <section id="all-scripts" class="section">
+        <div class="container">
+            <h2 class="section-title">All Scripts</h2>
+            <div class="script-grid" id="all-scripts-grid">
+                <!-- All script cards will be dynamically added here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- New footer with social links -->
+    <footer>
+        <div class="container">
+            <div class="social-links">
+                <a href="https://discord.gg/yourserver" class="social-btn">Discord Server</a>
+                <a href="https://github.com/yourusername" class="social-btn">GitHub Page</a>
+                <a href="https://youtube.com/@yourchannel" class="social-btn">YouTube Channel</a>
+            </div>
+            <p class="footer-text">© 2025 RobloxScripts Hub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // =====================================================================
+        // BACKGROUND IMAGES - REPLACE THESE WITH YOUR OWN IMAGES
+        // =====================================================================
+        // Add your background image URLs here (1920x1080 recommended)
+        const backgroundImages = [
+            "/api/placeholder/1920/1080", // Replace with: "images/background1.jpg"
+            "/api/placeholder/1920/1080", // Replace with: "images/background2.jpg"
+            "/api/placeholder/1920/1080"  // Replace with: "images/background3.jpg"
+        ];
+        
+        // =====================================================================
+        // SCRIPT DATA - ADD YOUR SCRIPTS HERE
+        // =====================================================================
+        // Format for each script:
+        // {
+        //     title: "Your Script Name",
+        //     description: "Brief description of what your script does",
+        //     image: "images/your-script-image.jpg", (400x320 recommended)
+        //     section: "featured" or "tools" or "all"
+        // }
+        const sampleScripts = [
+            // FEATURED SCRIPTS SECTION - Add featured scripts here
+            {
+                title: "Dti Gui V2",
+                description: "Developed alongside Evilionx3. Troll Faces, Haunt Players, Copy Outfit, Block Runway and more",
+                image: "images/dti.png",
+                section: "featured"
+            },
+            {
+                title: "Talentless Piano Autoplayer",
+                description: "150 Beautiful Songs, Perfect Accuracy, and Paired with MIDI2LUA",
+                image: "images/talentless.png",
+                section: "featured"
+            },
+            
+            // TOOLS SECTION - Add tool scripts here
+            {
+                title: "MIDI2LUA",
+                description: "Convert MIDI files into roblox piano autoplayer scripts. More info on the website.",
+                image: "images/midi2lua.png",
+                section: "tools"
+            },
+            
+            // ALL SCRIPTS SECTION - Add additional scripts here
+            {
+                title: "Dti Gui V2",
+                description: "Developed alongside Evilionx3. Troll Faces, Haunt Players, Copy Outfit, Block Runway and more",
+                image: "images/dti.png",
+                section: "all"
+            },
+            {
+                title: "Talentless Piano Autoplayer",
+                description: "150 Beautiful Songs, Perfect Accuracy, and Paired with MIDI2LUA",
+                image: "images/talentless.png", 
+                section: "all"
+            },
+            {
+                title: "Kawaii Aura",
+                description: "Create rings and circles around your player using unanchored parts.",
+                image: "images/kawaiiaura.png", 
+                section: "all"
+            },
+            {
+                title: "Kawaii Freaky Fling",
+                description: "A one-of-a-kind fling tool. Functionality created by anthonywasnthere.",
+                image: "images/kawaiifling.png", 
+                section: "all"
+            },
+            {
+                title: "Therapy Gui",
+                description: "Spam doors and curtains, get items and more.",
+                image: "images/therapy.png", 
+                section: "all"
+            },
+            {
+                title: "Obby Ruiner",
+                description: "Batch trigger disappearing blocks in obbies.",
+                image: "images/obbyruiner.png", 
+                section: "all"
+            },
+            
+            
+        ];
+        
+        // =====================================================================
+        // HELPER FUNCTIONS
+        // =====================================================================
+        
+        // Function to generate YouTube video IDs based on script names
+        // In a real implementation, you would store actual YouTube IDs for each script
+        function getYoutubeId(scriptTitle) {
+            // This is just a placeholder implementation
+            // In a real scenario, you would have actual YouTube IDs for each script
+            const demoIds = {
+                "Dti Gui V2": "yC5AyB35DEA",
+                "Talentless Piano Autoplayer": "CKiGotkNevs",
+                "MIDI2LUA": "TMZ3nnyqveo",
+                "VP2LUA": "fC7oUOUEEi4",
+                "Kawaii Aura": "hOkKaXlPN1c",
+                "Kawaii Freaky Fling": "Y0f44C1O8xQ",
+                "Therapy Gui": "GRL4KtiRGgM",
+                "Obby Ruiner": "x_bV7XWszc"
+            };
+            
+            // Return either the mapped ID or a default one
+            return demoIds[scriptTitle] || "dQw4w9WgXcQ";
+        }
+        
+        // DOM Elements
+        const featuredGrid = document.getElementById('featured-grid');
+        const toolsGrid = document.getElementById('tools-grid');
+        const allScriptsGrid = document.getElementById('all-scripts-grid');
+        const bgWrapper = document.querySelector('.bg-wrapper');
+        const header = document.querySelector('header');
+        
+        // =====================================================================
+        // BACKGROUND IMAGE ROTATION
+        // =====================================================================
+        let currentBgIndex = 0;
+        
+        function changeBackground() {
+            const nextIndex = (currentBgIndex + 1) % backgroundImages.length;
+            const nextBg = backgroundImages[nextIndex];
+            
+            // Create new background
+            const newBg = document.createElement('div');
+            newBg.style.backgroundImage = `url(${nextBg})`;
+            newBg.classList.add('bg-wrapper');
+            newBg.style.opacity = '0';
+            
+            // Add to DOM
+            document.querySelector('#hero').appendChild(newBg);
+            
+            // Fade in new background
+            setTimeout(() => {
+                newBg.style.opacity = '1';
+                
+                // Remove old background after transition
+                setTimeout(() => {
+                    if (bgWrapper.parentNode) {
+                        bgWrapper.parentNode.removeChild(bgWrapper);
+                    }
+                }, 500);
+            }, 50);
+            
+            currentBgIndex = nextIndex;
+        }
+        
+        // Initialize background
+        bgWrapper.style.backgroundImage = `url(${backgroundImages[0]})`;
+        setInterval(changeBackground, 8000); // Change every 8 seconds
+        
+        // =====================================================================
+        // SCRIPT CARD CREATION AND LOADING
+        // =====================================================================
+        
+            // Creates a card element for a script
+        function createScriptCard(script) {
+            const card = document.createElement('div');
+            card.classList.add('script-card');
+            
+            // For tools section, use "Take me there!" instead of "Get Script"
+            const buttonText = script.section === 'tools' ? 'Take me there!' : 'Get Script';
+            
+            // This is the structure of each script card
+            card.innerHTML = `
+                <img src="${script.image}" alt="${script.title}" class="script-image">
+                <div class="script-info">
+                    <h3 class="script-title">${script.title}</h3>
+                    <p class="script-desc">${script.description}</p>
+                    <div class="script-buttons">
+                        <a href="https://rscripts.net/${script.title.toLowerCase().replace(/\s+/g, '-')}" class="btn">${buttonText}</a>
+                        <a href="https://youtube.com/watch?v=${getYoutubeId(script.title)}" target="_blank" class="btn btn-secondary">Showcase</a>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+        
+        // Loads all scripts from the sampleScripts array to their respective sections
+        function loadScripts() {
+            sampleScripts.forEach(script => {
+                const card = createScriptCard(script);
+                
+                // Add to appropriate sections based on the script's 'section' property
+                if (script.section === 'featured') {
+                    featuredGrid.appendChild(card);
+                }
+                
+                if (script.section === 'tools') {
+                    toolsGrid.appendChild(card);
+                }
+
+                if (script.section === 'all') {
+                    allScriptsGrid.appendChild(card);
+                }
+            });
+            
+            // Animate cards on scroll
+            animateCardsOnScroll();
+        }
+        
+        // Add new script function removed - scripts are now added directly to the sampleScripts array in the code
+        
+        // =====================================================================
+        // ANIMATION AND SCROLL EFFECTS
+        // =====================================================================
+        
+        // Animates cards when they come into view while scrolling
+        function animateCardsOnScroll() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('animate');
+                        }, index * 100); // Stagger animation for a nice effect
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            document.querySelectorAll('.script-card').forEach(card => {
+                observer.observe(card);
+            });
+        }
+        
+        // Changes header appearance when scrolling
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+        
+        // Initialize when document is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load all scripts from the sampleScripts array
+            loadScripts();
+        });
+    </script>
 </body>
 </html>
