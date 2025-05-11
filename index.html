@@ -147,7 +147,7 @@
         }
         
         /* Lighter background for tool cards */
-        #tools-grid .script-card {
+        #Resources-grid .script-card {
             background-color: rgba(40, 40, 40, 0.8);
         }
         
@@ -451,7 +451,7 @@
             </div>
             <div class="nav-links" id="nav-menu">
                 <a href="#featured" class="nav-link">Featured</a>
-                <a href="#tools" class="nav-link">Tools</a>
+                <a href="#Resources" class="nav-link">Resources</a>
                 <a href="#all-scripts" class="nav-link">All Scripts</a>
             </div>
         </div>
@@ -476,10 +476,10 @@
         </div>
     </section>
 
-    <section id="tools" class="section">
+    <section id="Resources" class="section">
         <div class="container">
-            <h2 class="section-title">Tools</h2>
-            <div class="script-grid" id="tools-grid">
+            <h2 class="section-title">Resources</h2>
+            <div class="script-grid" id="Resources-grid">
                 <!-- Tool cards will be dynamically added here -->
             </div>
         </div>
@@ -524,7 +524,7 @@
         //     title: "Your Script Name",
         //     description: "Brief description of what your script does",
         //     image: "images/your-script-image.jpg", (400x320 recommended)
-        //     section: "featured" or "tools" or "all"
+        //     section: "featured" or "Resources" or "all"
         // }
         const sampleScripts = [
             // FEATURED SCRIPTS SECTION - Add featured scripts here
@@ -541,17 +541,26 @@
                 description: "150 Beautiful Songs, Perfect Accuracy, and Paired with MIDI2LUA",
                 image: "images/talentless.png",
                 section: "featured",
-                href: "https://rscripts.net/script/autoplay-piano-universal-human-sounding-tons-of-songs-rP9z",
-                target: "_blank"
+                href: "talentless",
+                target: ""
             },
             
-            // TOOLS SECTION - Add tool scripts here
+            // Resources SECTION - Add tool scripts here
             {
                 title: "MIDI2LUA",
                 description: "Convert MIDI files into roblox piano autoplayer scripts. More info on the website.",
                 image: "images/midi2lua.png",
-                section: "tools",
+                section: "Resources",
                 href: "../midi2lua",
+                target: ""
+                
+            },
+            {
+                title: "DTI GUI WEEKLY KEY",
+                description: "Get the current weekly key for the DTI GUI.",
+                image: "images/weeklykey.png",
+                section: "Resources",
+                href: "../dtigui",
                 target: ""
                 
             },
@@ -570,8 +579,8 @@
                 description: "150 Beautiful Songs, Perfect Accuracy, and Paired with MIDI2LUA",
                 image: "images/talentless.png", 
                 section: "all",
-                href: "https://rscripts.net/script/autoplay-piano-universal-human-sounding-tons-of-songs-rP9z",
-                target: "_blank"
+                href: "talentless",
+                target: ""
             },
             {
                 title: "Kawaii Aura",
@@ -635,7 +644,7 @@
         
         // DOM Elements
         const featuredGrid = document.getElementById('featured-grid');
-        const toolsGrid = document.getElementById('tools-grid');
+        const ResourcesGrid = document.getElementById('Resources-grid');
         const allScriptsGrid = document.getElementById('all-scripts-grid');
         const bgWrapper = document.querySelector('.bg-wrapper');
         const header = document.querySelector('header');
@@ -714,7 +723,7 @@
             const card = document.createElement('div');
             card.classList.add('script-card');
     
-            const buttonText = script.section === 'tools' ? 'Take me there!' : 'Get Script';
+            const buttonText = script.section === 'Resources' ? 'Take me there!' : 'Get Script';
     
             // Check viewport width for mobile devices
             const isMobile = window.innerWidth <= 768;
@@ -751,8 +760,8 @@
                     featuredGrid.appendChild(card);
                 }
                 
-                if (script.section === 'tools') {
-                    toolsGrid.appendChild(card);
+                if (script.section === 'Resources') {
+                    ResourcesGrid.appendChild(card);
                 }
 
                 if (script.section === 'all') {
