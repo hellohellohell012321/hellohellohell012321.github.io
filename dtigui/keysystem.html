@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Weekly Key Generator">
+  <meta property="og:description" content="Get your weekly key instantly">
+  <title>Weekly Key Generator</title>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #121212;
+      color: #fff;
+      padding: 20px;
+    }
+    
+    h1 {
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 600;
+      color: #f0f0f0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .description {
+      margin-bottom: 40px;
+      text-align: center;
+      font-size: 1.2rem;
+      color: #b0b0b0;
+      max-width: 600px;
+      line-height: 1.6;
+    }
+    
+    .button-container {
+      position: relative;
+      z-index: 1;
+      margin-bottom: 60px;
+    }
+    
+    .animated-button {
+      position: relative;
+      display: inline-block;
+      padding: 20px 50px;
+      font-size: 1.5rem;
+      font-weight: 500;
+      letter-spacing: 1px;
+      color: #fff;
+      background: linear-gradient(45deg, #4d4d4d, #292929);
+      border: none;
+      border-radius: 50px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+      cursor: pointer;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      min-width: 300px;
+      min-height: 70px;
+    }
+    
+    .animated-button::before {
+      content: "click me to get the weekly key!";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.5s ease;
+    }
+    
+    .animated-button::after {
+      content: "→";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translateY(100%);
+      transition: all 0.5s ease;
+      font-size: 1.5rem;
+    }
+    
+    .animated-button:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    }
+    
+    .animated-button:hover::before {
+      transform: translateY(-100%);
+    }
+    
+    .animated-button:hover::after {
+      transform: translateY(0);
+    }
+    
+    .glow {
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      top: -50%;
+      left: -50%;
+      background: radial-gradient(
+        circle,
+        rgba(150, 150, 150, 0.2) 0%,
+        rgba(150, 150, 150, 0) 70%
+      );
+      animation: pulse 2s infinite;
+      z-index: -1;
+    }
+    
+    .alternate-link {
+      font-size: 0.8rem;
+      color: #8a8a8a;
+      text-decoration: none;
+      position: relative;
+      padding: 5px 10px;
+      transition: all 0.3s ease;
+      overflow: hidden;
+      display: inline-block;
+    }
+    
+    .alternate-link::before {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(
+        circle,
+        rgba(150, 150, 150, 0.1) 0%,
+        rgba(150, 150, 150, 0) 70%
+      );
+      top: 0;
+      left: 0;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: -1;
+    }
+    
+    .alternate-link:hover {
+      color: #ffffff;
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+    
+    .alternate-link:hover::before {
+      opacity: 1;
+      animation: smallPulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% {
+        transform: scale(0.8);
+        opacity: 0.5;
+      }
+      50% {
+        transform: scale(1);
+        opacity: 0.8;
+      }
+      100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+      }
+    }
+    
+    @keyframes smallPulse {
+      0% {
+        opacity: 0.3;
+      }
+      50% {
+        opacity: 0.6;
+      }
+      100% {
+        opacity: 0.3;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>dti gui weekly key</h1>
+  <p class="description">this key will reset on WEDNESDAY, MAY 14. please click the button below to receive your key. this is 100% free of charge and should take no longer than one minute.</p>
+  
+  <div class="button-container">
+    <div class="glow"></div>
+    <button class="animated-button" onclick="window.location.href='https://direct-link.net/1347567/dti-gui-weekly-key1'"></button>
+  </div>
+  
+  <a href="https://workink.net/1Zzy/ut5qembu" class="alternate-link">click me if the link above isn't working (this is a harder keysystem alternative)</a>
+  
+</body>
+</html>
