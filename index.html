@@ -88,8 +88,6 @@
             animation: fadeIn 1s forwards 1s;
         }
         
-        /* Removed guns-link styles as we're using a simple text link instead */
-
         @keyframes fadeIn {
             to {
                 opacity: 1;
@@ -101,6 +99,7 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
+            width: 100%;
         }
         
         .section {
@@ -144,6 +143,7 @@
             cursor: pointer;
             opacity: 0;
             transform: translateY(30px);
+            width: 100%;
         }
         
         /* Lighter background for tool cards */
@@ -212,27 +212,10 @@
             margin-top: 1rem;
         }
         
-        /* Add script button and modal removed as requested */
-        
         @keyframes cardFadeIn {
             to {
                 opacity: 1;
                 transform: translateY(0);
-            }
-        }
-        
-        @media (max-width: 768px) {
-            #hero-title {
-                font-size: 3rem;
-            }
-            
-            .section-title {
-                font-size: 2rem;
-            }
-            
-            .script-grid {
-                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-                gap: 1.5rem;
             }
         }
         
@@ -258,6 +241,7 @@
             align-items: center;
             max-width: 1200px;
             margin: 0 auto;
+            width: 100%;
         }
         
         .logo {
@@ -265,6 +249,7 @@
             font-weight: 700;
             color: white;
             text-decoration: none;
+            white-space: nowrap;
         }
         
         .nav-links {
@@ -283,6 +268,26 @@
             color: white;
         }
         
+        /* Mobile nav menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 20px;
+            cursor: pointer;
+            z-index: 200;
+        }
+        
+        .hamburger span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background-color: white;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+        
         /* Footer Styles */
         footer {
             background-color: var(--dark);
@@ -296,6 +301,7 @@
             justify-content: center;
             gap: 1.5rem;
             margin-bottom: 2rem;
+            flex-wrap: wrap;
         }
         
         .social-btn {
@@ -308,6 +314,7 @@
             text-decoration: none;
             transition: transform 0.3s, box-shadow 0.3s;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            margin: 0.5rem;
         }
         
         .social-btn:hover {
@@ -321,13 +328,128 @@
             font-size: 0.9rem;
             margin-top: 2rem;
         }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 992px) {
+            .script-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            #hero-title {
+                font-size: 3rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .script-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .hamburger {
+                display: flex;
+            }
+            
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 70%;
+                height: 100vh;
+                flex-direction: column;
+                background-color: rgba(18, 18, 18, 0.95);
+                padding: 80px 2rem 2rem;
+                transition: right 0.3s ease;
+                gap: 1.5rem;
+                z-index: 150;
+                justify-content: flex-start;
+                box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+            }
+            
+            .nav-links.active {
+                right: 0;
+            }
+            
+            .nav-link {
+                font-size: 1.2rem;
+            }
+            
+            .script-buttons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .btn-secondary {
+                margin-left: 0;
+            }
+            
+            .social-links {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+            
+            .social-btn {
+                width: 80%;
+                margin: 0;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            #hero-title {
+                font-size: 2.5rem;
+            }
+            
+            #hero-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .container {
+                padding: 1.5rem;
+            }
+            
+            .logo {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Animation for hamburger menu */
+        .hamburger.active span:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+        
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .hamburger.active span:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
     </style>
 </head>
 <body>
     <header>
         <div class="header-container">
             <a href="#" class="logo">hellohellohell012321</a>
-            <div class="nav-links">
+            <div class="hamburger" id="hamburger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="nav-links" id="nav-menu">
                 <a href="#featured" class="nav-link">Featured</a>
                 <a href="#tools" class="nav-link">Tools</a>
                 <a href="#all-scripts" class="nav-link">All Scripts</a>
@@ -507,6 +629,32 @@
         const allScriptsGrid = document.getElementById('all-scripts-grid');
         const bgWrapper = document.querySelector('.bg-wrapper');
         const header = document.querySelector('header');
+        const hamburger = document.getElementById('hamburger-menu');
+        const navMenu = document.getElementById('nav-menu');
+        
+        // =====================================================================
+        // MOBILE NAVIGATION
+        // =====================================================================
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+        
+        // Close menu when clicking on a nav link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!navMenu.contains(e.target) && !hamburger.contains(e.target) && navMenu.classList.contains('active')) {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            }
+        });
         
         // =====================================================================
         // BACKGROUND IMAGE ROTATION
@@ -550,24 +698,34 @@
         // SCRIPT CARD CREATION AND LOADING
         // =====================================================================
         
-            // Creates a card element for a script
+        // Creates a card element for a script
         function createScriptCard(script) {
             const card = document.createElement('div');
             card.classList.add('script-card');
     
             const buttonText = script.section === 'tools' ? 'Take me there!' : 'Get Script';
     
-        card.innerHTML = `
-            <img src="${script.image}" alt="${script.title}" class="script-image">
-            <div class="script-info">
-                <h3 class="script-title">${script.title}</h3>
-                <p class="script-desc">${script.description}</p>
-                <div class="script-buttons">
+            // Check viewport width for mobile devices
+            const isMobile = window.innerWidth <= 768;
+            
+            const buttonsHtml = isMobile ? 
+                `<div class="script-buttons">
                     <a href="${script.href}" target="_blank" class="btn">${buttonText}</a>
                     <a href="https://youtube.com/watch?v=${getYoutubeId(script.title)}" target="_blank" class="btn btn-secondary">Showcase</a>
+                </div>` :
+                `<div class="script-buttons">
+                    <a href="${script.href}" target="_blank" class="btn">${buttonText}</a>
+                    <a href="https://youtube.com/watch?v=${getYoutubeId(script.title)}" target="_blank" class="btn btn-secondary">Showcase</a>
+                </div>`;
+    
+            card.innerHTML = `
+                <img src="${script.image}" alt="${script.title}" class="script-image">
+                <div class="script-info">
+                    <h3 class="script-title">${script.title}</h3>
+                    <p class="script-desc">${script.description}</p>
+                    ${buttonsHtml}
                 </div>
-            </div>
-        `;
+            `;
     
             return card;
         }
@@ -594,8 +752,6 @@
             // Animate cards on scroll
             animateCardsOnScroll();
         }
-        
-        // Add new script function removed - scripts are now added directly to the sampleScripts array in the code
         
         // =====================================================================
         // ANIMATION AND SCROLL EFFECTS
@@ -624,6 +780,25 @@
                 header.classList.add('scrolled');
             } else {
                 header.classList.remove('scrolled');
+            }
+        });
+        
+        // Check if touch device
+        function isTouchDevice() {
+            return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+        }
+        
+        // Handle touch devices differently
+        if (isTouchDevice()) {
+            document.body.classList.add('touch-device');
+        }
+        
+        // Adjust for window resize
+        window.addEventListener('resize', () => {
+            // Recalculate any necessary responsive elements
+            if (window.innerWidth > 768 && navMenu.classList.contains('active')) {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
             }
         });
         
