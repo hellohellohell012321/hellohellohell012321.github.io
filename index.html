@@ -498,7 +498,7 @@
     <footer>
         <div class="container">
             <div class="social-links">
-                <a href="https://discord.gg/MP9nZgEeQD" target="_blank" class="social-btn">discord</a>
+                <a href="discord" class="social-btn">discord</a>
                 <a href="https://github.com/hellohellohell012321" target="_blank" class="social-btn">github</a>
                 <a href="https://youtube.com/@hellohellohello12321" target="_blank" class="social-btn">youtube</a>
             </div>
@@ -533,14 +533,16 @@
                 description: "Developed alongside Evilionx3. Troll Faces, Haunt Players, Copy Outfit, Block Runway and more",
                 image: "images/dti.png",
                 section: "featured",
-                href: "https://rscripts.net/script/gui-revived-change-face-to-decal-autofarm-block-runway-LXvp"
+                href: "https://rscripts.net/script/gui-revived-change-face-to-decal-autofarm-block-runway-LXvp",
+                target: "_blank"
             },
             {
                 title: "Talentless Piano Autoplayer",
                 description: "150 Beautiful Songs, Perfect Accuracy, and Paired with MIDI2LUA",
                 image: "images/talentless.png",
                 section: "featured",
-                href: "https://rscripts.net/script/autoplay-piano-universal-human-sounding-tons-of-songs-rP9z"
+                href: "https://rscripts.net/script/autoplay-piano-universal-human-sounding-tons-of-songs-rP9z",
+                target: "_blank"
             },
             
             // TOOLS SECTION - Add tool scripts here
@@ -549,7 +551,9 @@
                 description: "Convert MIDI files into roblox piano autoplayer scripts. More info on the website.",
                 image: "images/midi2lua.png",
                 section: "tools",
-                href: "../midi2lua"
+                href: "../midi2lua",
+                target: ""
+                
             },
             
             // ALL SCRIPTS SECTION - Add additional scripts here
@@ -558,42 +562,48 @@
                 description: "Developed alongside Evilionx3. Troll Faces, Haunt Players, Copy Outfit, Block Runway and more",
                 image: "images/dti.png",
                 section: "all",
-                href: "https://rscripts.net/script/gui-revived-change-face-to-decal-autofarm-block-runway-LXvp"
+                href: "https://rscripts.net/script/gui-revived-change-face-to-decal-autofarm-block-runway-LXvp",
+                target: "_blank"
             },
             {
                 title: "Talentless Piano Autoplayer",
                 description: "150 Beautiful Songs, Perfect Accuracy, and Paired with MIDI2LUA",
                 image: "images/talentless.png", 
                 section: "all",
-                href: "https://rscripts.net/script/autoplay-piano-universal-human-sounding-tons-of-songs-rP9z"
+                href: "https://rscripts.net/script/autoplay-piano-universal-human-sounding-tons-of-songs-rP9z",
+                target: "_blank"
             },
             {
                 title: "Kawaii Aura",
                 description: "Create rings and circles around your player using unanchored parts.",
                 image: "images/kawaiiaura.png", 
                 section: "all",
-                href: "https://rscripts.net/script/make-unanchored-parts-float-around-you-kawaii-aura-sEWe"
+                href: "https://rscripts.net/script/make-unanchored-parts-float-around-you-kawaii-aura-sEWe",
+                target: "_blank"
             },
             {
                 title: "Kawaii Freaky Fling",
                 description: "A one-of-a-kind fling tool. Functionality created by anthonywasnthere.",
                 image: "images/kawaiifling.png", 
                 section: "all",
-                href: "https://rscripts.net/script/kawaii-freaky-fling-best-working-fling-target-players-klBn"
+                href: "https://rscripts.net/script/kawaii-freaky-fling-best-working-fling-target-players-klBn",
+                target: "_blank"
             },
             {
                 title: "Therapy Gui",
                 description: "Spam doors and curtains, get items and more.",
                 image: "images/therapy.png", 
                 section: "all",
-                href: "https://rscripts.net/script/op-fe-therapy-gui-troll-script-gCLf"
+                href: "https://rscripts.net/script/op-fe-therapy-gui-troll-script-gCLf",
+                target: "_blank"
             },
             {
                 title: "Obby Ruiner",
                 description: "Batch trigger disappearing blocks in obbies.",
                 image: "images/obbyruiner.png", 
                 section: "all",
-                href: "https://rscripts.net/script/trigger-all-disappearing-blocks-in-obbys-cOj9"
+                href: "https://rscripts.net/script/trigger-all-disappearing-blocks-in-obbys-cOj9",
+                target: "_blank"
             },
             
             
@@ -635,6 +645,7 @@
         // =====================================================================
         // MOBILE NAVIGATION
         // =====================================================================
+
         hamburger.addEventListener('click', () => {
             hamburger.classList.toggle('active');
             navMenu.classList.toggle('active');
@@ -710,11 +721,11 @@
             
             const buttonsHtml = isMobile ? 
                 `<div class="script-buttons">
-                    <a href="${script.href}" target="_blank" class="btn">${buttonText}</a>
+                    <a href="${script.href}" target="${script.target}" class="btn">${buttonText}</a>
                     <a href="https://youtube.com/watch?v=${getYoutubeId(script.title)}" target="_blank" class="btn btn-secondary">Showcase</a>
                 </div>` :
                 `<div class="script-buttons">
-                    <a href="${script.href}" target="_blank" class="btn">${buttonText}</a>
+                    <a href="${script.href}" target="${script.target}" class="btn">${buttonText}</a>
                     <a href="https://youtube.com/watch?v=${getYoutubeId(script.title)}" target="_blank" class="btn btn-secondary">Showcase</a>
                 </div>`;
     
