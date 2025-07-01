@@ -187,7 +187,7 @@
     cursor: pointer;
     }
 
-    #infoIcon, #infoIcon2, #infoIcon3, #infoIcon4 {
+    #infoIcon, #infoIcon2, #infoIcon3, #infoIcon4, #infoIcon5 {
       cursor: pointer;
       color: #888;
       text-decoration: underline;
@@ -209,7 +209,7 @@
       display: none;
     }
 
-    #popup, #popup2, #popup3, #popup4 {
+    #popup, #popup2, #popup3, #popup4, #popup5 {
       position: fixed;
       top: 50%;
       left: 50%;
@@ -222,7 +222,7 @@
       color: #e0e0e0;
     }
 
-    #popup button, #popup2 button, #popup3 button, #popup4 button {
+    #popup button, #popup2 button, #popup3 button, #popup4 button, #popup5 button {
     background-color: #666;
     color: #e0e0e0;
     border: none;
@@ -233,7 +233,7 @@
     padding: 12px;
     }
 
-    #popup button:hover, #popup2 button:hover, #popup3 button:hover, #popup4 button:hover {
+    #popup button:hover, #popup2 button:hover, #popup3 button:hover, #popup4 button:hover, #popup5 button:hover {
     background-color: #777;
     transform: scale(1.02);
     }
@@ -249,7 +249,11 @@
       <label for="bpmInput">enter bpm:</label>
       <input type="number" id="bpmInput" placeholder="Enter BPM" min="1" value="120" />
       <input type="file" id="midiFile" accept=".mid" />
-      <button id="convertButton">let's go!</button>
+
+      <div class="checkbox-container">
+        <input type="checkbox" id="checkAllCheckbox" />
+        <label for="checkAllCheckbox">check/uncheck all</label>
+      </div>
 
       <div class="checkbox-container">
         <input type="checkbox" id="midi88Checkbox" />
@@ -275,6 +279,21 @@
         <span id="infoIcon4">?</span>
       </div>
 
+      <div class="checkbox-container">
+        <input type="checkbox" id="sustainPedalCheckBox"/>
+        <label for="shortNotesCheckbox">use sustain pedal</label>
+        <span id="infoIcon5">?</span>
+      </div>
+
+      <p style="color: #e0e0e0; text-align: center; margin-top: 20px;">
+        if you dont understand the options above and you're too lazy to read the popup explanations, take a look at this list of piano games:
+        <br><br>
+        <a href="https://www.roblox.com/games/5593470048/Visual-Pianos" target="_blank">Visual Pianos</a>, <a href="https://www.roblox.com/games/11792237983/Tacs-Piano-Stuff" target="_blank">Tac's Piano Stuff</a>, <a href="https://www.roblox.com/games/10888259502/Piano-Rooms" target="_blank">Piano Rooms</a>, <a href="https://www.roblox.com/games/8044000698/Open-Mic-Night-VOICE-CHAT" target="_blank">Open Mic Night</a>.
+        <br><br>
+        if you are in any of these games, then check off all of the checkboxes to make your playing as realistic and full as possible.
+      </p>
+
+      <button id="convertButton">let's go!</button>
 
       <textarea id="output" readonly placeholder="Converted output will appear here..."></textarea>
         <div style="display: flex; gap: 50px;" class="button-container">
@@ -307,6 +326,12 @@
         <h3>what is note velocity conversion?</h3>
         <p>note velocity means the volume of the notes you play. this will make your playing more realistic because it will simulate the ALT key on your keyboard to adjust the velocity, making your playing sound like a real piano. the downside is that only some games support this, some of them being: <a href="https://www.roblox.com/games/5593470048/Visual-Pianos" target="_blank">Visual Pianos</a>, <a href="https://www.roblox.com/games/11792237983/Tacs-Piano-Stuff" target="_blank">Tac's Piano Stuff</a>, <a href="https://www.roblox.com/games/8044000698/Open-Mic-Night-VOICE-CHAT" target="_blank">Open Mic Night</a>.</p>
         <button onclick="closePopup4()">ok!</button>
+      </div>
+
+      <div id="popup5">
+        <h3>what is the sustain pedal?</h3>
+        <p>the sustain pedal on the piano makes the notes resonate. usually, notes will stop playing as soon as you let go of their piano key, but when the sustain pedal is held, all notes will continue to resonate even after you let them go. in roblox pianos, the sustain pedal is controlled with the space bar. your playing will sound a lot more realistic with this- but the downside is that only some games support this, some of them being: <a href="https://www.roblox.com/games/5593470048/Visual-Pianos" target="_blank">Visual Pianos</a>, <a href="https://www.roblox.com/games/11792237983/Tacs-Piano-Stuff" target="_blank">Tac's Piano Stuff</a>, <a href="https://www.roblox.com/games/10888259502/Piano-Rooms" target="_blank">Piano Rooms</a>, <a href="https://www.roblox.com/games/8044000698/Open-Mic-Night-VOICE-CHAT" target="_blank">Open Mic Night</a>. NOTE: since TALENTLESS uses short notes for most of its songs, you're expected to have invert sustain turned on- which basically means all notes will resonate. when using the sustain pedal feature, you'll need invert sustain OFF- which means you should also turn on the 'use midi note lengths' feature when converting with the sustain pedal.</p>
+        <button onclick="closePopup5()">ok!</button>
       </div>
       
     </div>
@@ -378,6 +403,18 @@ function closePopup4() {
   popup.style.display = 'none'; 
 }
 
+document.getElementById('infoIcon5').addEventListener('click', function() {
+  const popup = document.getElementById('popup5');
+  popup.style.visibility = 'visible';
+  popup.style.display = `block`;
+});
+
+function closePopup5() {
+  const popup = document.getElementById('popup5');
+  popup.style.visibility = 'hidden'; 
+  popup.style.display = 'none'; 
+}
+
 
 </script>
 
@@ -389,7 +426,16 @@ function closePopup4() {
   "https://unpkg.com/@tonejs/ui@0.0.8/build/tonejs-ui.js"></script>
   <script type="text/javascript" src=
   "https://unpkg.com/@tonejs/midi"></script>
-<script src="/midi2lua/midi61.js"></script>
-<script src="/midi2lua/pastefy.js"></script>
+<script src="midi61.js"></script>
+<script src="pastefy.js"></script>
 
+<script>
+  document.getElementById('checkAllCheckbox').addEventListener('change', function () {
+  const isChecked = this.checked;
+  const checkboxes = document.querySelectorAll('#midi88Checkbox, #detectBpmCheckbox, #shortNotesCheckbox, #velocityCheckbox, #sustainPedalCheckBox');
+  checkboxes.forEach(checkbox => {
+    checkbox.checked = isChecked;
+  });
+});
+</script>
 </html>
