@@ -37,7 +37,6 @@ document.getElementById("convertButton").addEventListener("click", async () => {
             "C6": "l", "C#6": "L", "Db6": "L", "D6": "z", "D#6": "Z", "Eb6": "Z", "E6": "x", "F6": "c", "F#6": "C", "Gb6": "C", "G6": "v", "G#6": "V", "Ab6": "V", "A6": "b", "A#6": "B", "Bb6": "B", "B6": "n",
             "C7": "m", "C#7": "M", "Db7": "M", "D7": "Ctrl+u", "D#7": "Ctrl+i", "Eb7": "Ctrl+i", "E7": "Ctrl+o", "F7": "Ctrl+p", "F#7": "Ctrl+a", "Gb7": "Ctrl+a", "G7": "Ctrl+s", "G#7": "Ctrl+d", "Ab7": "Ctrl+d", "A7": "Ctrl+f", "A#7": "Ctrl+g", "Bb7": "Ctrl+g", "B7": "Ctrl+h",
             "C8": "Ctrl+j"
-    
         };
     }
 
@@ -85,8 +84,19 @@ document.getElementById("convertButton").addEventListener("click", async () => {
             output += `-- Sustain Pedal: OFF --\n`;
         }
 
+        if (document.getElementById("midiSpoofCheckbox").checked) {
+            output += `-- Midi Spoofer: ON (this script will only work in "Piano Rooms!") --\n`;
+        } else {
+            output += `-- Midi Spoofer: OFF --\n`;
+        }
+
         output += `\nbpm = ${bpmInput}\n\n`; 
-        output += `loadstring(game:HttpGet("https://raw.githubusercontent.com/hellohellohell012321/TALENTLESS/main/loader_main.lua", true))()\n\n`
+
+        if (document.getElementById("midiSpoofCheckbox").checked) {
+            output += `loadstring(game:HttpGet("https://raw.githubusercontent.com/hellohellohell012321/TALENTLESS/main/midi_spoof_loader.lua", true))()\n\n`
+        } else {
+            output += `loadstring(game:HttpGet("https://raw.githubusercontent.com/hellohellohell012321/TALENTLESS/main/loader_main.lua", true))()\n\n`
+        }
         
 let lastEndTime = 0;
 let notesByTime = [];
