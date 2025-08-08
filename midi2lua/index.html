@@ -187,7 +187,7 @@
     cursor: pointer;
     }
 
-    #infoIcon, #infoIcon2, #infoIcon3, #infoIcon4, #infoIcon5 {
+    #infoIcon, #infoIcon2, #infoIcon3, #infoIcon4, #infoIcon5, #infoIcon6 {
       cursor: pointer;
       color: #888;
       text-decoration: underline;
@@ -209,7 +209,7 @@
       display: none;
     }
 
-    #popup, #popup2, #popup3, #popup4, #popup5 {
+    #popup, #popup2, #popup3, #popup4, #popup5, #popup6 {
       position: fixed;
       top: 50%;
       left: 50%;
@@ -222,7 +222,7 @@
       color: #e0e0e0;
     }
 
-    #popup button, #popup2 button, #popup3 button, #popup4 button, #popup5 button {
+    #popup button, #popup2 button, #popup3 button, #popup4 button, #popup5 button, #popup6 button {
     background-color: #666;
     color: #e0e0e0;
     border: none;
@@ -233,7 +233,7 @@
     padding: 12px;
     }
 
-    #popup button:hover, #popup2 button:hover, #popup3 button:hover, #popup4 button:hover, #popup5 button:hover {
+    #popup button:hover, #popup2 button:hover, #popup3 button:hover, #popup4 button:hover, #popup5 button:hover, #popup6 button:hover {
     background-color: #777;
     transform: scale(1.02);
     }
@@ -285,12 +285,18 @@
         <span id="infoIcon5">?</span>
       </div>
 
+      <div class="checkbox-container">
+        <input type="checkbox" id="midiSpoofCheckbox"/>
+        <label for="midiSpoofCheckbox">midi spoofer (only for piano rooms)</label>
+        <span id="infoIcon6">?</span>
+      </div>
+
       <p style="color: #e0e0e0; text-align: center; margin-top: 20px;">
         if you dont understand the options above and you're too lazy to read the popup explanations, take a look at this list of piano games:
         <br><br>
         <a href="https://www.roblox.com/games/5593470048/Visual-Pianos" target="_blank">Visual Pianos</a>, <a href="https://www.roblox.com/games/11792237983/Tacs-Piano-Stuff" target="_blank">Tac's Piano Stuff</a>, <a href="https://www.roblox.com/games/10888259502/Piano-Rooms" target="_blank">Piano Rooms</a>, <a href="https://www.roblox.com/games/8044000698/Open-Mic-Night-VOICE-CHAT" target="_blank">Open Mic Night</a>.
         <br><br>
-        if you are in any of these games, then check off all of the checkboxes to make your playing as realistic and full as possible.
+        if you are in any of these games, then check off all of the checkboxes to make your playing as realistic and full as possible (only check off midi spoofer if you're in the game "Piano Rooms"!).
       </p>
 
       <button id="convertButton">let's go!</button>
@@ -324,7 +330,7 @@
 
       <div id="popup4">
         <h3>what is note velocity conversion?</h3>
-        <p>note velocity means the volume of the notes you play. this will make your playing more realistic because it will simulate the ALT key on your keyboard to adjust the velocity, making your playing sound like a real piano. the downside is that only some games support this, some of them being: <a href="https://www.roblox.com/games/5593470048/Visual-Pianos" target="_blank">Visual Pianos</a>, <a href="https://www.roblox.com/games/11792237983/Tacs-Piano-Stuff" target="_blank">Tac's Piano Stuff</a>, <a href="https://www.roblox.com/games/8044000698/Open-Mic-Night-VOICE-CHAT" target="_blank">Open Mic Night</a>.</p>
+        <p>note velocity means the volume of the notes you play. this will make your playing more realistic because it will simulate the ALT key on your keyboard to adjust the velocity, making your playing sound like a real piano. the downside is that only some games support this, some of them being: <a href="https://www.roblox.com/games/5593470048/Visual-Pianos" target="_blank">Visual Pianos</a>, <a href="https://www.roblox.com/games/11792237983/Tacs-Piano-Stuff" target="_blank">Tac's Piano Stuff</a>, <a href="https://www.roblox.com/games/8044000698/Open-Mic-Night-VOICE-CHAT" target="_blank">Open Mic Night</a>. if you want to use this in the game <a href="https://www.roblox.com/games/10888259502/Piano-Rooms" target="_blank">Piano Rooms</a>, you need to also turn on the "midi spoofer" option. </p>
         <button onclick="closePopup4()">ok!</button>
       </div>
 
@@ -332,6 +338,14 @@
         <h3>what is the sustain pedal?</h3>
         <p>the sustain pedal on the piano makes the notes resonate. usually, notes will stop playing as soon as you let go of their piano key, but when the sustain pedal is held, all notes will continue to resonate even after you let them go. in roblox pianos, the sustain pedal is controlled with the space bar. your playing will sound a lot more realistic with this- but the downside is that only some games support this, some of them being: <a href="https://www.roblox.com/games/5593470048/Visual-Pianos" target="_blank">Visual Pianos</a>, <a href="https://www.roblox.com/games/11792237983/Tacs-Piano-Stuff" target="_blank">Tac's Piano Stuff</a>, <a href="https://www.roblox.com/games/10888259502/Piano-Rooms" target="_blank">Piano Rooms</a>, <a href="https://www.roblox.com/games/8044000698/Open-Mic-Night-VOICE-CHAT" target="_blank">Open Mic Night</a>. NOTE: since TALENTLESS uses short notes for most of its songs, you're expected to have invert sustain turned on- which basically means all notes will resonate. when using the sustain pedal feature, you'll need invert sustain OFF- which means you should also turn on the 'use midi note lengths' feature when converting with the sustain pedal.</p>
         <button onclick="closePopup5()">ok!</button>
+      </div>
+
+      <div id="popup6">
+        <h3>what is midi spoofer?</h3>
+        <p>this feature is only for the game PIANO ROOMS: <a href="https://www.roblox.com/games/10888259502/Piano-Rooms" target="_blank">https://www.roblox.com/games/10888259502/Piano-Rooms</a>. when "spoof midi" is turned ON, this will tell the game that all of your inputs are coming from a real midi keyboard, not a qwerty keyboard! this makes the autoplay so much more believable, because people will see that you are playing on a real piano. this works with velocity and midi88, but not the sustain pedal yet!</p>
+        <img src="/midi2lua/midiconnect.png" alt="Image description" style="width:50%; height:auto; margin-bottom: 15px;">
+        <h3>make sure you turn on "MidiConnect" before you play with midi spoofer!</h3>
+        <button onclick="closePopup6()">ok!</button>
       </div>
       
     </div>
@@ -411,6 +425,18 @@ document.getElementById('infoIcon5').addEventListener('click', function() {
 
 function closePopup5() {
   const popup = document.getElementById('popup5');
+  popup.style.visibility = 'hidden'; 
+  popup.style.display = 'none'; 
+}
+
+document.getElementById('infoIcon6').addEventListener('click', function() {
+  const popup = document.getElementById('popup6');
+  popup.style.visibility = 'visible';
+  popup.style.display = `block`;
+});
+
+function closePopup6() {
+  const popup = document.getElementById('popup6');
   popup.style.visibility = 'hidden'; 
   popup.style.display = 'none'; 
 }
